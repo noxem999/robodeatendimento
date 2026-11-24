@@ -1,6 +1,6 @@
 {
   "name": "bot-confeitaria-whatsapp",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Robô de atendimento WhatsApp com IA (Groq) para confeitaria/padaria, pronto para deploy na nuvem",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,7 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
     "@whiskeysockets/baileys": "^6.7.18",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
