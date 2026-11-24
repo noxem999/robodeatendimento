@@ -8,6 +8,7 @@ const {
 const qrcodeTerminal = require('qrcode-terminal');
 const pino = require('pino');
 const { gerarResposta } = require('./ai');
+const { assinaturaAtiva, avisarSuspensao } = require('../assinatura-supabase');
 const { definirQR, definirConectado, definirReconectando } = require('./server');
 
 const AUTH_DIR = process.env.AUTH_DIR || 'auth_info';
@@ -38,6 +39,17 @@ async function tratarMensagem(sock, msg) {
   if (!texto) return; // ignora áudio, figurinha etc.
 
   console.log(`📩 ${jid}: ${texto}`);
+
+  // Controle de assinatura: pausada/vencida => a IA não responde, só o aviso de suspensão
+  if (!(await assinaturaAtiva())) {
+    console.log('[bot] assinatura pausada/vencida: IA não respondeu.');
+    try {
+      await avisarSuspensao(sock, jid);
+    } catch (err) {
+      console.error('[bot] erro ao enviar aviso de suspensão:', err.message);
+    }
+    return;
+  }
 
   try {
     await sock.readMessages([msg.key]);
